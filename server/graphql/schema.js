@@ -55,6 +55,10 @@ const schema = buildSchema(
     },
     type Query {
         people: [Person]!
+        person(id: Int!): Person!
+    }
+    type Mutation {
+      deletePerson(id: Int!): Int
     }
     `
 );
@@ -63,6 +67,15 @@ const root = {
   people() {
     const formatted = users.map(val => new Person(val));
     return formatted;
+  },
+  person({ id }) {
+    const selected = users.filter(val => val.id === id)[0];
+    if (!selected) throw new Error(`No Person matching id: ${id}`);
+    return new Person(selected);
+  },
+  deletePerson({ id }) {
+    users = users.filter(val => val.id !== id);
+    return id;
   }
 };
 
